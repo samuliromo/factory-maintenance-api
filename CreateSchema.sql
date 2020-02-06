@@ -1,4 +1,6 @@
-﻿DROP TABLE IF EXISTS Devices, Tasks;
+﻿/*initialize the database schema*/
+
+DROP TABLE IF EXISTS Devices, Tasks;
 
 CREATE TYPE IMP AS ENUM ('minor', 'important', 'critical');
 CREATE TYPE TSTATUS AS ENUM ('solved', 'open');

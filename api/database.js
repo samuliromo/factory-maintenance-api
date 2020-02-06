@@ -1,6 +1,11 @@
-require('dotenv').config()
+/* All database logic and queries go in this file. 
+  Postgres variables ($1, $2, etc.) are used to avoid SQL injections */
+
+require('dotenv').config() //enables environment variables
 const {Pool} = require('pg')
 
+//use query pool so we don't have to open and close database connections for each query
+//database connection details are contained in .env file
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -10,15 +15,17 @@ const pool = new Pool({
 })
 
 
+//get all devices
 const getAllDevices = (response) => {
   pool.query('SELECT * FROM DEVICES', (error, results) => {
     if(error) { 
-      response({'error':error});
-    } else response(results.rows);
+      response({'error':error}); //send an error back to be shown to the end user
+    } else response(results.rows); //if no error, send the result
   })
 }
 
 
+//add new device
 const newDevice = (values, response) => {
   let {name, year, type} = values;
   pool.query('INSERT INTO DEVICES (devicename, deviceyear, devicetype) VALUES ($1, $2, $3)', 
@@ -30,9 +37,12 @@ const newDevice = (values, response) => {
 }
 
 
+//get all tasks
 const getAllTasks = (filter, response) => {
-  let constraint = "";
-  let values = []
+  let constraint = ""; //optional arguments to be inserted in the SQL query in case there are filters
+  let values = [] //values to be added in case of additional query parameters
+  //check if there are any filters:
+  //TODO: allow multiple filters for one query
   if (filter.device) {
     constraint = 'WHERE DEVICE = $1';
     values.push(filter.device);
@@ -53,6 +63,7 @@ const getAllTasks = (filter, response) => {
 }
 
 
+//get task by id
 const getTask = (id, response) => {
   pool.query('SELECT * FROM TASKS WHERE TASKID = $1', [id], (error, results) => {
     if(error) { 
@@ -62,6 +73,8 @@ const getTask = (id, response) => {
 }
 
 
+
+//add a new task
 const newTask = (values, response) => {
   let {device, importance, description, status} = values;
   pool.query(`INSERT INTO TASKS (device, importance, taskdescription, taskstatus, submitted)
@@ -74,6 +87,8 @@ const newTask = (values, response) => {
 }
 
 
+
+//update existing task
 const updateTask = (id, values, response) => {
   let {device, importance, description, status} = values;
   pool.query('UPDATE TASKS SET device=$1, importance=$2, taskdescription=$3, taskstatus=$4 WHERE taskid=$5',
@@ -85,6 +100,7 @@ const updateTask = (id, values, response) => {
 }
 
 
+//delete existing task
 const deleteTask = (id, response) => {
   pool.query('DELETE FROM TASKS WHERE TaskId = $1', [id], (error, results) => {
     if(error) { 
@@ -94,6 +110,7 @@ const deleteTask = (id, response) => {
 }
 
 
+//export query functions to be used in routes
 module.exports = {
   getAllDevices,
   newDevice,

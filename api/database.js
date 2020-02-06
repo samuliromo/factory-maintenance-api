@@ -1,10 +1,12 @@
+require('dotenv').config()
 const {Pool} = require('pg')
+
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'MORE',
-  password: 'mastersamuli',
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 })
 
 
@@ -72,10 +74,10 @@ const newTask = (values, response) => {
 }
 
 
-const updateTask = (values, response) => {
+const updateTask = (id, values, response) => {
   let {device, importance, description, status} = values;
-  pool.query('UPDATE TASKS SET device=$1, importance=$2, taskdescription=$3, taskstatus=$4' ,
-  [device, importance, description, status], (error, results) => {
+  pool.query('UPDATE TASKS SET device=$1, importance=$2, taskdescription=$3, taskstatus=$4 WHERE taskid=$5',
+  [device, importance, description, status, id], (error, results) => {
     if(error) { 
       response({'error':error});
     } else response(results.rows);
@@ -87,7 +89,7 @@ const deleteTask = (id, response) => {
   pool.query('DELETE FROM TASKS WHERE TaskId = $1', [id], (error, results) => {
     if(error) { 
       response({'error':error});
-    } else response(results.rows);
+    } else response({'message': `deleted task with the id of ${id}`});
   })
 }
 

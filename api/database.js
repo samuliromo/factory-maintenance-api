@@ -39,6 +39,10 @@ const getAllTasks = (filter, response) => {
     constraint = 'WHERE EXISTS (SELECT * FROM DEVICES WHERE DEVICES.devicename = TASKS.device AND devicetype = $1)';
     values.push(filter.devicetype)
   }
+  if (filter.description) {
+    constraint = 'WHERE taskdescription LIKE $1';
+    values.push(`%${filter.description}%`);
+  }
   pool.query(`SELECT * FROM TASKS ${constraint} ORDER BY IMPORTANCE DESC, SUBMITTED DESC`, values, (error, results) => {
     if(error) { 
       response({'error':error});

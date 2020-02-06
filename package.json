@@ -1,0 +1,16 @@
+{
+  "name": "maintenance_api",
+  "version": "1.0.0",
+  "description": "rest api for scheduling maintenance tasks",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "author": "samuli romo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^7.18.1"
+  }
+}

@@ -1,0 +1,28 @@
+//POST new task:
+
+{"device" : "device1",
+"description" : "joku tuntematon vika, korjataan niin pian kuin mahdollista",
+"importance" : "important",
+"status" : "open"}
+
+//PUT edit existing task:
+
+{"device" : "device1",
+  "description" : "joku tuntematon vika, korjataan niin pian kuin mahdollista (korjattu)",
+  "importance" : "important",
+  "status" : "solved"}
+
+//POST device not found ERROR: (produces the same error for PUT as well)
+
+{"device" : "tähän laitteen nimi jota ei ole olemassa",
+"description" : "tästä varmaan tulee virhe",
+"importance" : "critical",
+"status" : "open"}
+
+//POST error if using wrong format for "importance" or "status"
+
+{"device" : "device1",
+"description" : "tästäkin tulee virhe", 
+"importance" : "kriittinen",
+"status" : "open"
+}

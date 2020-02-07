@@ -54,7 +54,7 @@ const getAllTasks = (filter, response) => {
   if (filter.description) {
     constraint = 'WHERE taskdescription LIKE $1';
     values.push(`%${filter.description}%`);
-  }
+  }//order results first based on importance, then by sumbission date/time
   pool.query(`SELECT * FROM TASKS ${constraint} ORDER BY IMPORTANCE DESC, SUBMITTED DESC`, values, (error, results) => {
     if(error) { 
       response({'error':error});
@@ -78,7 +78,7 @@ const getTask = (id, response) => {
 const newTask = (values, response) => {
   let {device, importance, description, status} = values;
   pool.query(`INSERT INTO TASKS (device, importance, taskdescription, taskstatus, submitted)
-  VALUES ($1, $2, $3, $4, current_timestamp) RETURNING TASKID`, [device, importance, description, status],
+  VALUES ($1, $2, $3, $4, current_timestamp) RETURNING TASKID`, [device, importance, description, status],//return the id of newly added task
   (error, results) => {
     if(error) { 
       response({'error':error});
